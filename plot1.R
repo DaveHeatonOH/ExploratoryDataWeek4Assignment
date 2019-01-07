@@ -1,5 +1,5 @@
 ## Set Working Directory
-setwd("~/Coursera/Exploratory Data Analysis/Week 4 Assignments")
+setwd("C:/Users/dave_/OneDrive/GitHub/Coursera/Exploratory Data Analysis/ExploratoryDataWeek4Assignment")
 
 ## Unzip file
 
