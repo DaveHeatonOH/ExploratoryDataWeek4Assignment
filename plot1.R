@@ -14,7 +14,7 @@ dir()
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
-## Sum up the total emissions for each individual year to plot on a chart
+## Sum up the total emissions for each individual year to plot on a chart (question says total emissions)
 polYear <- with(NEI, tapply(Emissions, year, sum, na.rm = T))
 
 ## Create a variable for each of the years to plot on the chart

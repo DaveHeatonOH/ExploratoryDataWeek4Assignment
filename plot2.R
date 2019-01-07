@@ -17,11 +17,11 @@ SCC <- readRDS("Source_Classification_Code.rds")
 ## Subset to just Baltimore
 blt <- subset(NEI, fips == "24510")
 
-## Sum up the total emissions for each individual year to plot on a chart
+## Sum up the total emissions for each individual year to plot on a chart (question says total emissions)
 polYear <- with(blt, tapply(Emissions, year, sum, na.rm = T))
 
 ## Create a variable for each of the years to plot on the chart
-years <- unique(bl$year)
+years <- unique(blt$year)
 
 ## Create a PNG
 png("plot2.png", width = 867, height = 558, units = "px")
