@@ -18,55 +18,62 @@ library(gridExtra)
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
-## Get a list of the SCC values which contain Coal (using level 3)
-coalData <- SCC[grep("Coal", SCC$SCC.Level.Three, ignore.case = T),]
+str(SCC)
 
-## Create a subset of the data which is limited to just coal based sources
-NEICoal <- subset(NEI, NEI$SCC %in% coalData$SCC)
+## Get the SCC codes for On Road - Motor Vehicles
+SCCOnRoad <- SCC[grep("Mobile - On-Road", SCC$EI.Sector),]
+
+## Limit the data to just motor vehicles for baltimore
+motorVehicleData <- subset(NEI, NEI$SCC %in% SCCOnRoad$SCC & fips == "24510")
+
 
 ## Look to see if there is any massive change in the number of records for each year.
 ## If not we can try and aggregate the data to compare it it like the earlier plots
-hist(NEICoal$year)
+hist(motorVehicleData$year)
 
-summary(NEICoal$Emissions)
+summary(motorVehicleData$Emissions)
 
 ## Shows some increase in records across the years but not massivly so if we aggreagate the total emissions
 ## across each year to see what happens.
 
-plot1Data <- aggregate(list(total.emissions = NEICoal$Emissions), list(year = NEICoal$year), sum) ## Get total emissions by year
-plot2Data <- aggregate(list(mean.emissions = NEICoal$Emissions), list(year = NEICoal$year), mean, na.rm = T) ## Get mean emissions by year
-plot3Data <- aggregate(list(median.emissions = NEICoal$Emissions), list(year = NEICoal$year), median, na.rm = T) ## Get median emissions by year
+plot1Data <- aggregate(list(total.emissions = motorVehicleData$Emissions), list(year = motorVehicleData$year), sum) ## Get total emissions by year
+plot2Data <- aggregate(list(mean.emissions = motorVehicleData$Emissions), list(year = motorVehicleData$year), mean, na.rm = T) ## Get mean emissions by year
+plot3Data <- aggregate(list(median.emissions = motorVehicleData$Emissions), list(year = motorVehicleData$year), median, na.rm = T) ## Get median emissions by year
 
 plot1 <- ggplot(plot1Data, aes(x = year, y = total.emissions, group = 1)) +
         geom_line() + 
         geom_point() +
         xlab("Year") + 
         ylab("Total Emissions (tons)") +
-        labs(title = "Total Emissions by Year")
+        labs(title = "Total Emissions by Year - Baltimore \nMotor Vehicle Sources") +
+        theme(plot.title = element_text(hjust = 0.5))
 
 plot2 <- ggplot(plot2Data, aes(x = year, y = mean.emissions, group = 1)) +
         geom_line() + 
         geom_point() +
         xlab("Year") + 
         ylab("Mean Emissions (tons)") +
-        labs(title = "Mean Emissions by Year")
+        labs(title = "Mean Emissions by Year - Baltimore \nMotor Vehicle Sources") +
+        theme(plot.title = element_text(hjust = 0.5))
 
 plot3 <- ggplot(plot3Data, aes(x = year, y = median.emissions, group = 1)) +
         geom_line() + 
         geom_point() +
         xlab("Year") + 
         ylab("Median Emissions (tons)") +
-        labs(title = "Median Emissions by Year")
+        labs(title = "Median Emissions by Year - Baltimore \nMotor Vehicle Sources") +
+        theme(plot.title = element_text(hjust = 0.5))
 
 ## Now we know the number of observations increases but we can also see the emissions decrease over time.
 
 ## Create a PNG
-png("plot4.png", width = 1016, height = 656, units = "px")
+png("plot5.png", width = 1016, height = 656, units = "px")
 
-grid.arrange(plot1, plot2, plot3, nrow = 2)
+lay <- rbind(c(1,2), c(3,3))
+
+grid.arrange(grobs = list(plot1, plot2, plot3), layout_matrix = lay)
 
 ## Close the PNG device
 
 dev.off()
 
-             
